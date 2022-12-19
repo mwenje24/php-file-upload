@@ -3,42 +3,76 @@
 date_default_timezone_set('Africa/Nairobi');
 
 require_once "./dbconfig.php";
+require_once "./idgenerator.php";
 
-function randomString($n){
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $str ='';
-    for($i = 0; $i < $n; $i++){
-        $index = rand(0, strlen($characters) - 1);
-        $str .= $characters[$index];
-    }
-    return $str;
-}
-
-
+$document_id = '';
+$document_name = '';
+$document_url = '';
 $image_id = '';
 $image_name = '';
 $image_url = '';
 
+if(isset($_POST['image'])){
+    if($_SERVER['REQUEST_METHOD'] ==='POST'){
 
-if($_SERVER['REQUEST_METHOD'] ==='POST'){
+        $imagefileTemp = $_FILES["document_url"]["temp_name"];
+        $imagefilePath = "assets/images/".$_FILES["image_url"]["name"]."%".date("FjY_g:ia");
 
-    $image_id = randomString(5);
-    $image_name = $_POST['image_name'];
-    $image_url = $_POST['image_url'];
+        $image_id = randomString(5);
+        $image_name = $_POST['image_name'];
+        $image_url = $imagefilePath;
 
-    $statement = $db->prepare("INSERT INTO images(image_id, image_name, image_url) VALUES(:image_id, :image_name, :image_url)");
-    $statement->bindValue(':image_id', $image_id);
-    $statement->bindValue(':image_name', $image_name);
-    $statement->bindValue(':image_url', $image_url);
-    $statement->execute();
+        // echo '<pre>';
+        //     var_dump($_POST);
+        // echo '</pre>';
+        // exit();
 
-    if($statement){
-     header('Location: index.php');
+        if(move_uploaded_file($imagefileTemp, $imagefilePath)){
+            $statement = $db->prepare("INSERT INTO images(image_id, image_name, image_url) VALUES(:image_id, :image_name, :image_url)");
+            $statement->bindValue(':image_id', $image_id);
+            $statement->bindValue(':image_name', $image_name);
+            $statement->bindValue(':image_url', $image_url);
+            $statement->execute();
+
+
+            if($statement){
+            header('Location: index.php');
+            }
+        }    
+        else{
+            echo '<h6 class="justify-content-center text-danger">Image could not be uploaded</h6>';
+        }
+
+
     }
-
-
 }
 
+if(isset($_POST['document'])){
+    if($_SERVER['REQUEST_METHOD'] ==='POST'){
+
+        $docfileTemp = $_FILES["document_url"]["temp_name"];
+        $docfilePath = "assets/documents/".$_FILES["document_url"]["name"]."%".date("FjY_g:ia");
+
+        $document_id = randomString(5);
+        $document_name = $_POST['document_name'];
+        $document_url = $docfilePath;
+
+        if(move_uploaded_file($docfileTemp, $docfilePath)){
+            $statement = $db->prepare("INSERT INTO documents(document_id, document_name, document_url) VALUES(:document_id, :document_name, :document_url)");
+            $statement->bindValue(':document_id', $document_id);
+            $statement->bindValue(':document_name', $document_name);
+            $statement->bindValue(':document_url', $document_url);
+            $statement->execute();
+
+            if($statement){
+                header('Location: index.php');
+            }
+        }
+        else{
+            echo '<h6 class="justify-content-center text-danger">Document could not be uploaded</h6>';
+        }
+    }
+}
 
 ?>
 
@@ -56,15 +90,42 @@ if($_SERVER['REQUEST_METHOD'] ==='POST'){
 <body>
     <div class="container mt-5">
         <div class="title mb-4 text-center fs-2">Uploading a file using PHP</div>
-        <form class="entry-form mt-2" method="POST" enctype="multipart/form-data">
-            <div class="row justify-content-center">
-                <label class="col-sm-2 mt-2 col-form-label">File to upload:</label>
-                <div class="col-sm-4 mt-2">
-                    <input type="file" name="image_url" class="form-control">
+            <div class="row">
+                <div class="col-6">
+                    <form class="entry-form mt-2" method="POST" enctype="multipart/form-data">
+                        <div class="row justify-content-center">
+                            <label class="col-sm-4 mt-2 col-form-label">Image Name:</label>
+                            <div class="col-sm-8 mt-2">
+                                <input type="text" name="image_name" class="form-control" />
+                            </div>
+                            <label class="col-sm-4 mt-2 col-form-label">Image:</label>
+                            <div class="col-sm-8 mt-2">
+                                <input type="file" name="image_url" class="form-control" />
+                            </div>
+                            <div class="col-12 mt-2">
+                                <input type="submit" class="btn btn-sm btn-secondary float-end" value="upload" name="image"/>
+                            </div>              
+                        </div>
+                    </form>
                 </div>
-                <input type="submit" class="col-sm-2 float-end btn btn-sm btn-secondary"/>             
-            </div>
-        </form>
+                <div class="col-6">
+                    <form class="entry-form mt-2" method="POST" enctype="multipart/form-data">
+                        <div class="row justify-content-center">
+                            <label class="col-sm-4 mt-2 col-form-label">Document Name:</label>
+                            <div class="col-sm-8 mt-2">
+                                <input type="text" name="document_name" class="form-control" />
+                            </div>
+                            <label class="col-sm-4 mt-2 col-form-label">Document:</label>
+                            <div class="col-sm-8 mt-2">
+                                <input type="file" name="document_url" class="form-control" />
+                            </div>
+                            <div class="col-12 mt-2">
+                                <input type="submit" class="btn btn-sm btn-secondary float-end" value="upload" name="document"/>
+                            </div>                                    
+                        </div>
+                    </form>
+                </div>
+            </div>            
     </div>
 </body>
 </html>

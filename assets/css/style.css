@@ -4,6 +4,12 @@ body{
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 .entry-form{
-    width: 80%;
+    /* width: 80%; */
     margin: auto;
+}
+.col-form-label{
+    font-size: 0.9rem;
+}
+input{
+    height: 5vh;
 }
