@@ -1,5 +1,7 @@
 body{
     background-color: rgb(78, 76, 76);
+    color: White;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 .entry-form{
     width: 80%;
