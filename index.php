@@ -2,6 +2,7 @@
 
 date_default_timezone_set('Africa/Nairobi');
 
+
 require_once "./dbconfig.php";
 require_once "./idgenerator.php";
 
@@ -15,8 +16,14 @@ $image_url = '';
 if(isset($_POST['image'])){
     if($_SERVER['REQUEST_METHOD'] ==='POST'){
 
+        // $_FILES["image_url"]["name"];
+        // $_FILES["image_url"]["type"];
+        // $_FILES["image_url"]["size"];
+        // $_FILES["image_url"]["temp_name"];
+        // $_FILES["image_url"]["error"];
+
         $imagefileTemp = $_FILES["document_url"]["temp_name"];
-        $imagefilePath = "assets/images/".$_FILES["image_url"]["name"]."%".date("FjY_g:ia");
+        $imagefilePath = "./assets/images/".$_FILES["image_url"]["name"]."%".date("FjY_g:ia");
 
         $image_id = randomString(5);
         $image_name = $_POST['image_name'];
@@ -49,6 +56,8 @@ if(isset($_POST['image'])){
 
 if(isset($_POST['document'])){
     if($_SERVER['REQUEST_METHOD'] ==='POST'){
+
+        $_FILES["image_url"]["error"];
 
         $docfileTemp = $_FILES["document_url"]["temp_name"];
         $docfilePath = "assets/documents/".$_FILES["document_url"]["name"]."%".date("FjY_g:ia");
@@ -92,7 +101,7 @@ if(isset($_POST['document'])){
         <div class="title mb-4 text-center fs-2">Uploading a file using PHP</div>
             <div class="row">
                 <div class="col-6">
-                    <form class="entry-form mt-2" method="POST" enctype="multipart/form-data">
+                    <form class="entry-form mt-2" method="POST" action="" enctype="multipart/form-data">
                         <div class="row justify-content-center">
                             <label class="col-sm-4 mt-2 col-form-label">Image Name:</label>
                             <div class="col-sm-8 mt-2">
